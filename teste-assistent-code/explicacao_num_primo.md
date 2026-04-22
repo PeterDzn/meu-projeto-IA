@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-Este documento descreve em detalhes a função `eh_primo()`, que implementa um algoritmo eficiente para determinar se um número inteiro é primo.
+Este documento descreve a implementação otimizada e orientada a **Clean Code** da funcionalidade de verificação de números primos. O módulo oferece múltiplas funções para diferentes casos de uso, com type hints completos e tratamento de erros robusto.
 
 ---
 
@@ -18,202 +18,307 @@ Um **número primo** é um número natural maior que 1 que possui exatamente doi
 
 ---
 
-## 🔧 Análise do Código
+## 📦 Estrutura do Módulo
 
-### Assinatura da Função
-
-```python
-def eh_primo(numero):
+```
+num_primos.py
+├── eh_primo(numero: int) → bool
+├── filtrar_primos(numeros: List[int]) → List[int]
+├── contar_primos(inicio: int, fim: int) → int
+├── obter_lista_primos(inicio: int, fim: int) → List[int]
+├── exibir_resultado_teste(numero: int) → None
+└── executar_testes() → None
 ```
 
-- **Parâmetro:** `numero` (int) - o número inteiro a ser testado
-- **Retorno:** bool - `True` se primo, `False` se não primo
+---
 
-### Passo 1: Validação Inicial (números < 2)
+## 🔧 Análise Detalhada das Funções
+
+### 1️⃣ Função Principal: `eh_primo(numero: int) -> bool`
+
+#### Assinatura com Type Hints
 
 ```python
-if numero < 2:
-    return False
+def eh_primo(numero: int) -> bool:
 ```
 
-**Razão:** Por definição matemática, números menores que 2 (como 0, 1 e números negativos) **não são primos**. Este é o caso base mais simples.
+**Type Hints:**
+- `numero: int` - parâmetro deve ser inteiro
+- `-> bool` - retorna booleano
 
-**Complexidade:** O(1) - tempo constante
+**Benefícios:**
+- Detecta erros de tipo em tempo de desenvolvimento
+- Melhora documentação automática
+- Facilita uso com IDEs modernas
 
-### Passo 2: Caso Especial - Número 2
+#### Validação de Entrada
 
 ```python
-if numero == 2:
-    return True
+if not isinstance(numero, int):
+    raise TypeError(f"Esperado int, obtido {type(numero).__name__}")
 ```
 
-**Razão:** O número 2 é o **único número primo par**. É importante tratá-lo separadamente porque:
-- 2 só é divisível por 1 e por 2
-- Permite otimizar o algoritmo descartando todos os outros pares
+**Princípio Clean Code:** Falhe rapidamente com mensagens claras. Evita erros silenciosos e comportamentos inesperados.
 
-**Complexidade:** O(1) - tempo constante
+#### Lógica de Verificação
 
-### Passo 3: Descartar Números Pares
+| Etapa | Descrição | Tempo |
+|-------|-----------|-------|
+| 1 | `numero < 2` → False | O(1) |
+| 2 | `numero == 2` → True | O(1) |
+| 3 | `numero % 2 == 0` → False | O(1) |
+| 4 | Loop até √n com passo 2 | O(√n) |
 
-```python
-if numero % 2 == 0:
-    return False
-```
-
-**Razão:** Qualquer número par maior que 2 é divisível por 2, logo não é primo. Isso elimina 50% dos candidatos imediatamente.
-
-**Complexidade:** O(1) - tempo constante
-
-**Operador `%`:** Retorna o resto da divisão. Se `numero % 2 == 0`, o número é par.
-
-### Passo 4: Verificação de Divisibilidade (Loop Principal)
+#### Variável com Nome Descritivo
 
 ```python
-i = 3
-while i * i <= numero:
-    if numero % i == 0:
+divisor = 3  # Antes: i = 3
+while divisor * divisor <= numero:
+    if numero % divisor == 0:
         return False
-    i += 2
+    divisor += 2
 ```
 
-#### 4.1 - Por que verificar até √n?
+**Melhoria Clean Code:** `divisor` é mais legível que `i`. O nome reflete o propósito da variável.
 
-**Princípio Matemático:** Se um número `n` tem um divisor `d` maior que √n, então também possui um divisor `d' = n/d` menor que √n.
+---
 
-**Exemplo:** Para 36:
-- √36 = 6
-- Se 36 é divisível por 9 (> 6), também é por 36/9 = 4 (< 6)
-- Logo, só precisamos verificar divisores até 6
+### 2️⃣ Função: `filtrar_primos(numeros: List[int]) -> List[int]`
 
-**Implicação:** Se nenhum divisor até √n foi encontrado, o número é primo.
-
-**Redução de Complexidade:**
-- Abordagem ingênua: O(n) - verifica até n-1
-- Abordagem otimizada: O(√n) - verifica até √n
-
-Para n = 1.000.000:
-- Ingênua: 999.999 iterações
-- Otimizada: apenas ~1.000 iterações ✓
-
-#### 4.2 - Por que incrementar de 2 em 2?
+Filtra números primos de uma lista usando list comprehension.
 
 ```python
-i += 2  # Só verifica números ímpares
+def filtrar_primos(numeros: List[int]) -> List[int]:
+    return [num for num in numeros if eh_primo(num)]
 ```
 
-**Razão:** Como já descartamos números pares, só precisamos testar divisores ímpares:
-- i começa em 3
-- Incrementa em 2: 3, 5, 7, 9, 11, 13...
-- Isso elimina metade dos testes dentro do loop
+**Uso:**
+```python
+>>> filtrar_primos([2, 3, 4, 5, 10])
+[2, 3, 5]
+```
 
-#### 4.3 - Condição do While
+**Benefícios:**
+- Reutiliza função principal
+- Código conciso e Pythônico
+- Type hints claros sobre entrada/saída
+
+---
+
+### 3️⃣ Função: `contar_primos(inicio: int, fim: int) -> int`
+
+Conta quantos primos existem em um intervalo sem armazenar a lista.
 
 ```python
-while i * i <= numero:
+def contar_primos(inicio: int, fim: int) -> int:
+    return sum(1 for num in range(inicio, fim + 1) if eh_primo(num))
 ```
 
-**Equivalente a:** `while i <= sqrt(numero)`
+**Vantagens:**
+- Economiza memória (não cria lista intermediária)
+- Eficiente para intervalos grandes
+- Usa generator expression
 
-**Evita calcular √n** (que é mais custoso computacionalmente). A condição `i * i <= numero` é verificada em O(1).
+**Uso:**
+```python
+>>> contar_primos(2, 100)
+25
+```
 
-**Exemplo prático para 97:**
-- √97 ≈ 9.85
-- Itera: i = 3, 5, 7, 9
-- 9 × 9 = 81 ≤ 97 ✓ (continua)
-- 11 × 11 = 121 > 97 ✗ (para)
-- Nenhum divisor encontrado → 97 é primo
+---
+
+### 4️⃣ Função: `obter_lista_primos(inicio: int, fim: int) -> List[int]`
+
+Retorna lista de primos em um intervalo.
+
+```python
+def obter_lista_primos(inicio: int, fim: int) -> List[int]:
+    return [num for num in range(inicio, fim + 1) if eh_primo(num)]
+```
+
+**Uso:**
+```python
+>>> obter_lista_primos(10, 20)
+[11, 13, 17, 19]
+```
+
+---
+
+### 5️⃣ Função: `exibir_resultado_teste(numero: int) -> None`
+
+Exibe resultado formatado com tratamento de erros.
+
+```python
+def exibir_resultado_teste(numero: int) -> None:
+    try:
+        eh_prime = eh_primo(numero)
+        status = "primo" if eh_prime else "não primo"
+        print(f"{numero:4d} → {status}")
+    except TypeError as e:
+        print(f"Erro ao testar {numero}: {e}")
+```
+
+**Princípio Clean Code:**
+- Responsabilidade única: apenas exibir resultado
+- Tratamento de exceções específicas
+- Formatação clara com f-string
+
+---
+
+### 6️⃣ Função: `executar_testes() -> None`
+
+Orquestra todos os testes do módulo.
+
+```python
+def executar_testes() -> None:
+    # Testes individuais
+    # Teste em intervalo
+    # Estatísticas
+```
+
+**Organização:**
+1. **Teste Individual** - verifica números específicos
+2. **Teste em Intervalo** - lista primos em range
+3. **Estatísticas** - resumo das operações
+
+**Saída Formatada:**
+```
+==================================================
+VERIFICAÇÃO DE NÚMEROS PRIMOS
+==================================================
+
+📊 Teste Individual:
+--------------------------------------------------
+   2 → primo
+   3 → primo
+   4 → não primo
+...
+```
+
+---
+
+## ✨ Princípios Clean Code Aplicados
+
+### 1. **Type Hints Completos**
+```python
+# ✅ Bom - Type hints explícitos
+def filtrar_primos(numeros: List[int]) -> List[int]:
+
+# ❌ Ruim - Sem informação de tipo
+def filtrar_primos(numeros):
+```
+
+### 2. **Nomes Significativos**
+```python
+# ✅ Bom - Nome descreve o propósito
+divisor = 3
+
+# ❌ Ruim - Nome vago
+i = 3
+```
+
+### 3. **Funções com Responsabilidade Única**
+- `eh_primo()` - apenas verifica
+- `filtrar_primos()` - apenas filtra
+- `exibir_resultado_teste()` - apenas exibe
+
+### 4. **Docstrings Descritivas**
+Cada função possui docstring com:
+- Descrição clara do propósito
+- Args e Returns documentados
+- Exemplos de uso (doctest)
+
+### 5. **Tratamento de Erros**
+```python
+if not isinstance(numero, int):
+    raise TypeError(f"Esperado int, obtido {type(numero).__name__}")
+```
+
+### 6. **Legibilidade**
+- Variáveis nomeadas apropriadamente
+- Funções pequenas e focadas
+- Comentários apenas quando necessário
+
+### 7. **DRY (Don't Repeat Yourself)**
+- `filtrar_primos()` reutiliza `eh_primo()`
+- `contar_primos()` reutiliza `eh_primo()`
+- Evita duplicação de lógica
 
 ---
 
 ## 📊 Análise de Complexidade
 
-| Métrica | Valor |
-|---------|-------|
-| **Complexidade de Tempo** | O(√n) |
-| **Complexidade de Espaço** | O(1) |
-| **Caso Melhor** | O(1) - número par > 2 |
-| **Caso Pior** | O(√n) - número primo grande |
+| Função | Tempo | Espaço |
+|--------|-------|--------|
+| `eh_primo(n)` | O(√n) | O(1) |
+| `filtrar_primos(lista)` | O(m × √n)* | O(k)* |
+| `contar_primos(a, b)` | O((b-a) × √n) | O(1) |
+| `obter_lista_primos(a, b)` | O((b-a) × √n) | O(k) |
 
-**Comparação com outras abordagens:**
-
-```
-Ingênua (divide por todos):           O(n)        - muito lenta
-Otimizada (até √n, pares):           O(√n)       - boa performance ✓
-Crivo de Eratóstenes (múltiplos):    O(n log log n) - para vários números
-```
+*m = tamanho da lista, n = maior número, k = quantidade de primos
 
 ---
 
 ## 🧪 Exemplos de Execução
 
-### Exemplo 1: Número Par Simples (4)
+### Teste 1: Número Individual
+```python
+>>> eh_primo(17)
+True
 ```
-eh_primo(4)
-├─ 4 < 2? Não
-├─ 4 == 2? Não
-├─ 4 % 2 == 0? Sim → Retorna False
-```
-**Resultado:** `False` (4 não é primo)
 
-### Exemplo 2: Número Primo Pequeno (5)
+### Teste 2: Filtrar Lista
+```python
+>>> filtrar_primos([10, 11, 12, 13, 14, 15])
+[11, 13]
 ```
-eh_primo(5)
-├─ 5 < 2? Não
-├─ 5 == 2? Não
-├─ 5 % 2 == 0? Não
-├─ Loop:
-│  ├─ i = 3: 3×3 = 9 ≤ 5? Não → para loop
-├─ Retorna True
-```
-**Resultado:** `True` (5 é primo)
 
-### Exemplo 3: Número Primo Grande (97)
+### Teste 3: Contar em Intervalo
+```python
+>>> contar_primos(2, 50)
+15  # 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47
 ```
-eh_primo(97)
-├─ 97 < 2? Não
-├─ 97 == 2? Não
-├─ 97 % 2 == 0? Não
-├─ Loop:
-│  ├─ i = 3: 97 % 3 ≠ 0, continua
-│  ├─ i = 5: 97 % 5 ≠ 0, continua
-│  ├─ i = 7: 97 % 7 ≠ 0, continua
-│  ├─ i = 9: 97 % 9 ≠ 0, continua
-│  ├─ i = 11: 11×11 = 121 > 97? Sim → para loop
-├─ Retorna True
+
+### Teste 4: Listar Primos
+```python
+>>> obter_lista_primos(20, 40)
+[23, 29, 31, 37]
 ```
-**Resultado:** `True` (97 é primo)
+
+### Teste 5: Tratamento de Erro
+```python
+>>> eh_primo("17")
+TypeError: Esperado int, obtido str
+```
 
 ---
 
-## 💡 Otimizações Aplicadas
+## 🚀 Performance Real
 
-1. **Early Exit:** Retorna `False` assim que encontra um divisor
-2. **Redução por Metade:** Descarta números pares no começo
-3. **Raiz Quadrada:** Limita iterações a O(√n)
-4. **Incremento em 2:** Testa apenas divisores ímpares
+Para números até **1.000.000**:
+- ✅ `eh_primo(999983)`: ~317 verificações (√999983 ≈ 999)
+- ✅ `contar_primos(2, 1000)`: detecta 168 primos em ms
+- ✅ `obter_lista_primos(1, 10000)`: encontra 1229 primos rapidamente
 
----
-
-## 🚀 Performance
-
-Para testar números de 2 a 1.000.000:
-- **Velocidade:** Detecta todos os ~78.498 primos rapidamente
-- **Memória:** Apenas uma variável (`i`) além do parâmetro
-- **Escala:** Ainda eficiente para números muito grandes
+**Comparação:**
+- Algoritmo ingênuo O(n): 999.999 operações
+- Algoritmo otimizado O(√n): apenas ~999 operações ✓
 
 ---
 
 ## 📝 Casos de Uso
 
-✅ Validação de números primos em criptografia  
-✅ Otimização de algoritmos matemáticos  
-✅ Verificação de chaves em estruturas de dados  
-✅ Aplicações de processamento numérico  
+✅ Criptografia RSA (geração de números primos grandes)  
+✅ Otimização de tabelas hash (tamanho primo)  
+✅ Análise de sequências numéricas  
+✅ Algoritmos de fatoração  
+✅ Educação em otimização de algoritmos  
 
 ---
 
-## 🔗 Referências Matemáticas
+## 🔗 Referências
 
 - **Teorema Fundamental da Aritmética:** Todo inteiro > 1 é primo ou produto de primos
-- **Teorema dos Números Primos:** Densidade de primos diminui conforme n aumenta
 - **Otimização √n:** Baseia-se no princípio dos divisores complementares
+- **PEP 257:** Docstring Conventions (Python)
+- **PEP 484:** Type Hints (Python)
