@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedro Henrique Gomes Rodrigues — Vision AI</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Patrick+Hand&family=VT323&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --sky:      #7ec8e3;
+      --sky2:     #b3e5f5;
+      --grass:    #5dbb63;
+      --grass2:   #3d9e4a;
+      --finn:     #00aaff;
+      --jake:     #f5a623;
+      --jake2:    #e8891a;
+      --marcy:    #6a0dad;
+      --marcy2:   #9b30d4;
+      --bubblegum:#ff69b4;
+      --bmo:      #4fc3a1;
+      --black:    #1a1a2e;
+      --outline:  #1a1a2e;
+      --white:    #fffef0;
+      --cream:    #fff8dc;
+      --btn-bg:   #f5a623;
+      --btn-hover:#e8891a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--sky);
+      font-family: 'Patrick Hand', cursive;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .clouds {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .cloud {
+      position: absolute;
+      background: var(--white);
+      border-radius: 50px;
+      border: 3px solid var(--outline);
+      opacity: .85;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: var(--white);
+      border-radius: 50%;
+      border: 3px solid var(--outline);
+    }
+    .cloud-1 { width:120px;height:40px;top:8%;left:-5%; animation:drift1 28s linear infinite; }
+    .cloud-1::before{width:60px;height:55px;top:-30px;left:15px;}
+    .cloud-1::after {width:45px;height:42px;top:-22px;left:50px;}
+    .cloud-2 { width:90px;height:30px;top:18%;left:20%; animation:drift1 38s linear infinite 8s; }
+    .cloud-2::before{width:45px;height:42px;top:-24px;left:12px;}
+    .cloud-2::after {width:35px;height:32px;top:-18px;left:38px;}
+    .cloud-3 { width:140px;height:45px;top:5%;left:60%; animation:drift2 32s linear infinite 3s; }
+    .cloud-3::before{width:70px;height:62px;top:-35px;left:20px;}
+    .cloud-3::after {width:52px;height:48px;top:-26px;left:60px;}
+    .cloud-4 { width:80px;height:28px;top:25%;left:80%; animation:drift2 22s linear infinite 12s; }
+    .cloud-4::before{width:40px;height:38px;top:-22px;left:10px;}
+    .cloud-4::after {width:30px;height:28px;top:-16px;left:35px;}
+
+    @keyframes drift1 {
+      0%   { transform: translateX(-200px); }
+      100% { transform: translateX(110vw); }
+    }
+    @keyframes drift2 {
+      0%   { transform: translateX(110vw); }
+      100% { transform: translateX(-200px); }
+    }
+
+    .grass-bottom {
+      position: fixed; bottom: 0; left: 0; width: 100%; z-index: 0;
+      pointer-events: none;
+    }
+
+    header {
+      position: relative; z-index: 10;
+      background: var(--black);
+      border-bottom: 4px solid var(--jake);
+      padding: .8rem 0;
+    }
+
+    .header-inner {
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: .5rem;
+    }
+
+    .logo-text {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      letter-spacing: .06em;
+      color: var(--jake);
+      text-shadow: 2px 2px 0 var(--outline), -1px -1px 0 var(--outline);
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .logo-text span { color: var(--bubblegum); }
+
+    .badge-at {
+      font-family: 'Bangers', cursive;
+      font-size: .75rem; letter-spacing: .1em;
+      color: var(--bmo);
+      border: 2px solid var(--bmo);
+      border-radius: 6px;
+      padding: .15em .55em;
+      background: rgba(79,195,161,.12);
+      text-shadow: 1px 1px 0 var(--outline);
+    }
+
+    main { position: relative; z-index: 2; }
+
+    .hero {
+      padding: 2.5rem 0 2rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(1.6rem, 5vw, 2.8rem);
+      letter-spacing: .08em; line-height: 1.05;
+      color: var(--white);
+      text-shadow:
+        3px 3px 0 var(--outline),
+        -1px -1px 0 var(--outline),
+        1px -1px 0 var(--outline),
+        -1px 1px 0 var(--outline);
+      margin-bottom: .3rem;
+    }
+
+    .hero h1 .name-accent { color: var(--jake); }
+
+    .hero-sub {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem; letter-spacing: .12em;
+      color: var(--marcy2);
+      text-shadow: 1px 1px 0 var(--outline);
+      margin-bottom: 1.8rem;
+    }
+
+    .cam-frame-wrap {
+      display: flex; justify-content: center;
+      margin: 0 auto 2rem;
+      max-width: 400px;
+    }
+
+    .cam-frame {
+      position: relative;
+      width: 100%; max-width: 360px;
+    }
+
+    .cam-border {
+      border: 5px solid var(--outline);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--black);
+      box-shadow:
+        6px 6px 0 var(--outline),
+        0 0 0 3px var(--jake),
+        9px 9px 0 var(--outline);
+      position: relative;
+    }
+
+    .cam-border::before {
+      content: '★';
+      position: absolute; top: 6px; left: 8px;
+      font-size: 1rem; color: var(--jake);
+      z-index: 5; pointer-events: none;
+      text-shadow: 1px 1px 0 var(--outline);
+    }
+    .cam-border::after {
+      content: '★';
+      position: absolute; top: 6px; right: 8px;
+      font-size: 1rem; color: var(--bubblegum);
+      z-index: 5; pointer-events: none;
+      text-shadow: 1px 1px 0 var(--outline);
+    }
+
+    .cam-placeholder {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: #0d0d1a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: .6rem;
+      min-height: 220px;
+    }
+
+    .cam-placeholder .eye-left,
+    .cam-placeholder .eye-right {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--finn);
+      border: 3px solid var(--white);
+      animation: blink-eyes 3.5s ease-in-out infinite;
+    }
+    .cam-placeholder .eyes {
+      display: flex; gap: 24px; margin-bottom: .3rem;
+    }
+    @keyframes blink-eyes {
+      0%,90%,100%{transform:scaleY(1)}
+      93%{transform:scaleY(.08)}
+    }
+    .cam-placeholder p {
+      font-family: 'Bangers', cursive;
+      font-size: 1.1rem; letter-spacing: .08em;
+      color: var(--jake);
+      text-shadow: 1px 1px 0 var(--outline);
+    }
+
+    #webcam-container {
+      width: 100%; display: flex; justify-content: center;
+      background: #000; position: relative; overflow: hidden;
+    }
+    #webcam-container canvas {
+      width: 100% !important; height: auto !important; display: block;
+    }
+    #webcam-container::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent 5%, rgba(245,166,35,.6) 40%, rgba(245,166,35,1) 50%, rgba(245,166,35,.6) 60%, transparent 95%);
+      animation: camscan 2.5s linear infinite;
+      opacity: 0; pointer-events: none; z-index: 3;
+    }
+    #webcam-container.active::after { opacity: 1; }
+    @keyframes camscan { 0%{top:0%} 100%{top:100%} }
+
+    .cam-label-bar {
+      background: var(--jake);
+      border-top: 3px solid var(--outline);
+      padding: .3rem .8rem;
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+    }
+    .cam-label-bar span {
+      font-family: 'Bangers', cursive;
+      font-size: .95rem; letter-spacing: .1em;
+      color: var(--outline);
+    }
+    .cam-live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--outline); border: 2px solid var(--outline);
+      transition: background .3s;
+    }
+    .cam-live-dot.live {
+      background: #ff3333;
+      border-color: var(--outline);
+      animation: livedot 1s ease-in-out infinite;
+    }
+    @keyframes livedot {
+      0%,100%{opacity:1} 50%{opacity:.2}
+    }
+
+    .btn-start {
+      display: inline-flex; align-items: center; gap: .65rem;
+      font-family: 'Bangers', cursive;
+      font-size: 1.5rem; letter-spacing: .1em;
+      color: var(--outline);
+      background: var(--btn-bg);
+      border: 4px solid var(--outline);
+      border-radius: 12px;
+      padding: .75rem 2.6rem;
+      cursor: pointer; position: relative;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 4px 4px 0 var(--outline);
+      text-shadow: none;
+    }
+    .btn-start:hover {
+      transform: translate(-2px,-2px);
+      box-shadow: 6px 6px 0 var(--outline);
+      background: var(--bubblegum);
+    }
+    .btn-start:active {
+      transform: translate(2px,2px);
+      box-shadow: 2px 2px 0 var(--outline);
+    }
+    .btn-start.done {
+      background: var(--bmo);
+      cursor: default;
+    }
+    .btn-start.done:hover { transform: none; box-shadow: 4px 4px 0 var(--outline); background: var(--bmo); }
+
+    .perm-note {
+      margin-top: .75rem;
+      font-size: .8rem;
+      color: var(--black);
+      opacity: .65;
+      display: flex; align-items: center; justify-content: center; gap: .35rem;
+    }
+
+    .pred-card {
+      background: var(--cream);
+      border: 4px solid var(--outline);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 6px 6px 0 var(--outline);
+      margin-bottom: 2rem;
+    }
+
+    .pred-card-header {
+      background: var(--marcy);
+      border-bottom: 4px solid var(--outline);
+      padding: .55rem 1.2rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .pred-card-header span {
+      font-family: 'Bangers', cursive;
+      font-size: 1.1rem; letter-spacing: .1em;
+      color: var(--white);
+      text-shadow: 2px 2px 0 var(--outline);
+    }
+
+    .pred-body { padding: 1.2rem 1.4rem 1.5rem; }
+
+    .pred-row { margin-bottom: 1rem; }
+    .pred-row:last-child { margin-bottom: 0; }
+
+    .pred-meta {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: .4rem;
+    }
+    .pred-cls {
+      font-family: 'Patrick Hand', cursive;
+      font-size: .88rem; font-weight: 700;
+      color: var(--outline);
+    }
+    .pred-val {
+      font-family: 'VT323', monospace;
+      font-size: 1.05rem; letter-spacing: .05em;
+      color: var(--marcy);
+      min-width: 3.5rem; text-align: right;
+      transition: color .3s;
+    }
+    .pred-val.top { color: var(--grass2); }
+
+    .prog-track {
+      height: 14px;
+      background: rgba(26,26,46,.1);
+      border: 2.5px solid var(--outline);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--finn), var(--bubblegum));
+      border-radius: 99px;
+      transition: width .32s ease;
+    }
+    .prog-fill.top {
+      background: linear-gradient(90deg, var(--jake), var(--grass));
+    }
+
+    footer {
+      position: relative; z-index: 2;
+      background: var(--black);
+      border-top: 4px solid var(--jake);
+      padding: 1.2rem 0;
+      text-align: center;
+    }
+    .ft-text {
+      font-family: 'Patrick Hand', cursive;
+      font-size: .82rem; color: rgba(255,248,220,.5);
+    }
+    .ft-text a { color: var(--jake); text-decoration: none; }
+    .ft-text a:hover { color: var(--bubblegum); }
+
+    .char-strip {
+      display: flex; justify-content: center; align-items: flex-end;
+      gap: clamp(.5rem, 2vw, 1.5rem);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .at-char { width: clamp(48px,8vw,72px); flex-shrink:0; }
+
+    @media (max-width: 576px) {
+      .btn-start { font-size: 1.25rem; padding: .7rem 2rem; }
+      .hero { padding: 1.8rem 0 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="clouds" aria-hidden="true">
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="cloud cloud-4"></div>
+</div>
+
+<svg class="grass-bottom" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M0,40 Q40,10 80,35 Q120,60 160,30 Q200,5 240,38 Q280,65 320,28 Q360,0 400,35 Q440,65 480,30 Q520,5 560,40 Q600,70 640,32 Q680,5 720,38 Q760,65 800,28 Q840,0 880,35 Q920,65 960,30 Q1000,5 1040,40 Q1080,70 1120,32 Q1160,5 1200,38 Q1260,65 1300,30 Q1360,5 1400,38 L1440,35 L1440,80 L0,80Z" fill="#5dbb63" stroke="#1a1a2e" stroke-width="3"/>
+  <path d="M0,55 Q60,35 120,55 Q180,70 240,50 Q300,35 360,55 Q420,70 480,50 Q540,35 600,58 Q660,75 720,52 Q780,35 840,55 Q900,70 960,50 Q1020,35 1080,55 Q1140,72 1200,50 Q1300,35 1380,55 L1440,52 L1440,80 L0,80Z" fill="#3d9e4a" stroke="#1a1a2e" stroke-width="2"/>
+</svg>
+
+<header>
+  <div class="container header-inner">
+    <a href="#" class="logo-text">Pedro Henrique <span>Gomes Rodrigues</span></a>
+    <span class="badge-at">VISION AI</span>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <section class="hero">
+
+      <h1>
+        Pedro Henrique<br>
+        <span class="name-accent">Gomes Rodrigues</span>
+      </h1>
+      <p class="hero-sub">✦ VISION AI · TEACHABLE MACHINE ✦</p>
+
+      <div class="char-strip" aria-hidden="true">
+
+        <!-- Finn -->
+        <svg class="at-char" viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">
+          <rect x="15" y="38" width="30" height="34" rx="4" fill="#00aaff" stroke="#1a1a2e" stroke-width="2.5"/>
+          <rect x="10" y="36" width="10" height="22" rx="3" fill="#a0522d" stroke="#1a1a2e" stroke-width="2"/>
+          <ellipse cx="30" cy="26" rx="16" ry="18" fill="#fffef0" stroke="#1a1a2e" stroke-width="2.5"/>
+          <ellipse cx="30" cy="10" rx="17" ry="10" fill="#fffef0" stroke="#1a1a2e" stroke-width="2.5"/>
+          <rect x="13" y="9" width="34" height="10" rx="0" fill="#fffef0" stroke="#1a1a2e" stroke-width="2.5"/>
+          <circle cx="24" cy="27" r="4" fill="#1a1a2e"/>
+          <circle cx="36" cy="27" r="4" fill="#1a1a2e"/>
+          <circle cx="25.5" cy="25.5" r="1.3" fill="#fff"/>
+          <circle cx="37.5" cy="25.5" r="1.3" fill="#fff"/>
+          <path d="M25,33 Q30,37 35,33" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+          <rect x="18" y="70" width="10" height="14" rx="3" fill="#fffef0" stroke="#1a1a2e" stroke-width="2"/>
+          <rect x="32" y="70" width="10" height="14" rx="3" fill="#fffef0" stroke="#1a1a2e" stroke-width="2"/>
+          <ellipse cx="23" cy="83" rx="7" ry="4" fill="#1a1a2e"/>
+          <ellipse cx="37" cy="83" rx="7" ry="4" fill="#1a1a2e"/>
+        </svg>
+
+        <!-- Jake -->
+        <svg class="at-char" viewBox="0 0 70 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="35" cy="52" rx="22" ry="20" fill="#f5a623" stroke="#1a1a2e" stroke-width="2.5"/>
+          <ellipse cx="28" cy="48" rx="5" ry="4" fill="#c97d10" stroke="#1a1a2e" stroke-width="1.5"/>
+          <ellipse cx="42" cy="58" rx="4" ry="3" fill="#c97d10" stroke="#1a1a2e" stroke-width="1.5"/>
+          <ellipse cx="35" cy="26" rx="18" ry="17" fill="#f5a623" stroke="#1a1a2e" stroke-width="2.5"/>
+          <ellipse cx="28" cy="24" rx="5" ry="6" fill="#1a1a2e"/>
+          <ellipse cx="42" cy="24" rx="5" ry="6" fill="#1a1a2e"/>
+          <circle cx="29.5" cy="22" r="2" fill="#fff"/>
+          <circle cx="43.5" cy="22" r="2" fill="#fff"/>
+          <ellipse cx="35" cy="29" rx="3" ry="2" fill="#c97d10" stroke="#1a1a2e" stroke-width="1.5"/>
+          <path d="M27,34 Q35,41 43,34" fill="#1a1a2e" stroke="#1a1a2e" stroke-width="1"/>
+          <ellipse cx="17" cy="20" rx="5" ry="6" fill="#f5a623" stroke="#1a1a2e" stroke-width="2"/>
+          <ellipse cx="53" cy="20" rx="5" ry="6" fill="#f5a623" stroke="#1a1a2e" stroke-width="2"/>
+          <path d="M55,58 Q70,55 65,42" fill="none" stroke="#f5a623" stroke-width="6" stroke-linecap="round"/>
+          <path d="M55,58 Q70,55 65,42" fill="none" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Marceline -->
+        <svg class="at-char" viewBox="0 0 55 95" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="42" width="27" height="35" rx="3" fill="#c8c8d8" stroke="#1a1a2e" stroke-width="2.5"/>
+          <rect x="14" y="42" width="27" height="12" rx="3" fill="#8a0000" stroke="#1a1a2e" stroke-width="2.5"/>
+          <ellipse cx="27.5" cy="25" rx="15" ry="17" fill="#d8d8e8" stroke="#1a1a2e" stroke-width="2.5"/>
+          <ellipse cx="27.5" cy="10" rx="16" ry="12" fill="#1a1a2e"/>
+          <rect x="10" y="10" width="35" height="16" rx="0" fill="#1a1a2e"/>
+          <path d="M10,14 Q5,35 8,55" fill="none" stroke="#1a1a2e" stroke-width="7" stroke-linecap="round"/>
+          <path d="M45,14 Q50,35 47,55" fill="none" stroke="#1a1a2e" stroke-width="7" stroke-linecap="round"/>
+          <ellipse cx="22" cy="26" rx="4" ry="4.5" fill="#1a1a2e"/>
+          <ellipse cx="33" cy="26" rx="4" ry="4.5" fill="#1a1a2e"/>
+          <circle cx="23.5" cy="24.5" r="1.3" fill="#fff"/>
+          <circle cx="34.5" cy="24.5" r="1.3" fill="#fff"/>
+          <circle cx="22" cy="38" r="2.5" fill="#8a0000" stroke="#1a1a2e" stroke-width="1.2"/>
+          <circle cx="30" cy="38" r="2.5" fill="#8a0000" stroke="#1a1a2e" stroke-width="1.2"/>
+          <path d="M22,33 Q27.5,36 33,33" fill="none" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"/>
+          <rect x="17" y="75" width="9" height="14" rx="2" fill="#c8c8d8" stroke="#1a1a2e" stroke-width="2"/>
+          <rect x="29" y="75" width="9" height="14" rx="2" fill="#c8c8d8" stroke="#1a1a2e" stroke-width="2"/>
+          <ellipse cx="21.5" cy="88" rx="7" ry="4" fill="#1a1a2e"/>
+          <ellipse cx="33.5" cy="88" rx="7" ry="4" fill="#1a1a2e"/>
+          <ellipse cx="27.5" cy="94" rx="10" ry="3" fill="rgba(26,26,46,.15)"/>
+        </svg>
+
+        <!-- BMO -->
+        <svg class="at-char" viewBox="0 0 55 70" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="10" width="39" height="48" rx="6" fill="#4fc3a1" stroke="#1a1a2e" stroke-width="2.5"/>
+          <rect x="14" y="16" width="27" height="22" rx="3" fill="#b0f0de" stroke="#1a1a2e" stroke-width="2"/>
+          <circle cx="22" cy="25" r="3.5" fill="#1a1a2e"/>
+          <circle cx="33" cy="25" r="3.5" fill="#1a1a2e"/>
+          <circle cx="23.3" cy="23.7" r="1.2" fill="#fff"/>
+          <circle cx="34.3" cy="23.7" r="1.2" fill="#fff"/>
+          <path d="M20,31 Q27.5,36 35,31" fill="none" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="16" cy="46" r="3" fill="#ff69b4" stroke="#1a1a2e" stroke-width="1.5"/>
+          <circle cx="27.5" cy="46" r="3" fill="#f5a623" stroke="#1a1a2e" stroke-width="1.5"/>
+          <circle cx="39" cy="46" r="3" fill="#00aaff" stroke="#1a1a2e" stroke-width="1.5"/>
+          <rect x="15" y="56" width="8" height="10" rx="2" fill="#3a9a80" stroke="#1a1a2e" stroke-width="2"/>
+          <rect x="32" y="56" width="8" height="10" rx="2" fill="#3a9a80" stroke="#1a1a2e" stroke-width="2"/>
+          <ellipse cx="19" cy="66" rx="7" ry="3.5" fill="#1a1a2e"/>
+          <ellipse cx="36" cy="66" rx="7" ry="3.5" fill="#1a1a2e"/>
+        </svg>
+
+        <!-- Princess Bubblegum -->
+        <svg class="at-char" viewBox="0 0 55 95" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10,48 Q7,72 12,82 L43,82 Q48,72 45,48Z" fill="#ff69b4" stroke="#1a1a2e" stroke-width="2.5"/>
+          <path d="M20,48 Q19,65 21,80" fill="none" stroke="#ff8fc8" stroke-width="3" stroke-linecap="round"/>
+          <rect x="16" y="36" width="23" height="16" rx="3" fill="#ff69b4" stroke="#1a1a2e" stroke-width="2.5"/>
+          <ellipse cx="27.5" cy="22" rx="14" ry="16" fill="#ffcce0" stroke="#1a1a2e" stroke-width="2.5"/>
+          <path d="M13,18 Q10,8 27.5,6 Q45,8 42,18" fill="#ff69b4" stroke="#1a1a2e" stroke-width="2.5"/>
+          <path d="M18,14 L20,6 L27.5,11 L35,6 L37,14Z" fill="#f5a623" stroke="#1a1a2e" stroke-width="2"/>
+          <circle cx="27.5" cy="7" r="2.5" fill="#e74c3c" stroke="#1a1a2e" stroke-width="1.2"/>
+          <circle cx="22" cy="23" r="3.8" fill="#1a1a2e"/>
+          <circle cx="33" cy="23" r="3.8" fill="#1a1a2e"/>
+          <circle cx="23.4" cy="21.5" r="1.3" fill="#fff"/>
+          <circle cx="34.4" cy="21.5" r="1.3" fill="#fff"/>
+          <path d="M22,29 Q27.5,33 33,29" fill="none" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M13,18 Q9,30 11,44" fill="none" stroke="#ff69b4" stroke-width="6" stroke-linecap="round"/>
+          <path d="M42,18 Q46,30 44,44" fill="none" stroke="#ff69b4" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+
+      </div>
+
+      <div class="cam-frame-wrap">
+        <div class="cam-frame">
+          <div class="cam-border">
+            <div id="cam-placeholder" class="cam-placeholder">
+              <div class="eyes">
+                <span class="eye-left"></span>
+                <span class="eye-right"></span>
+              </div>
+              <p>APERTE O BOTÃO!</p>
+            </div>
+            <div id="webcam-container"></div>
+            <div class="cam-label-bar">
+              <span class="cam-live-dot" id="camDot"></span>
+              <span id="camLabel">CÂMERA DESLIGADA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="startBtn" class="btn-start" onclick="init()">
+        <i class="bi bi-camera-video-fill"></i>
+        <span>ATIVAR CÂMERA!</span>
+      </button>
+
+      <div class="perm-note">
+        <i class="bi bi-shield-check"></i>
+        seu navegador pedirá permissão de câmera
+      </div>
+
+    </section>
+
+    <div class="row justify-content-center pb-5">
+      <div class="col-12 col-md-9 col-lg-7">
+        <div id="pred-card" class="pred-card" style="display:none;">
+          <div class="pred-card-header">
+            <span>★ CLASSIFICAÇÕES ★</span>
+          </div>
+          <div class="pred-body">
+            <div id="label-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <p class="ft-text">
+      Pedro Henrique Gomes Rodrigues &mdash;
+      <a href="https://teachablemachine.withgoogle.com/" target="_blank">Teachable Machine</a>
+      &amp; <a href="https://www.tensorflow.org/js" target="_blank">TensorFlow.js</a>
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+<script>
+  const MODEL_URL = "https://teachablemachine.withgoogle.com/models/-bgkYkEJO/";
+  let model, webcam, labelContainer, maxPredictions;
+  let fills = [], valLabels = [], clsLabels = [];
+
+  async function init() {
+    const btn = document.getElementById("startBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" style="width:.9rem;height:.9rem;border-width:2px;"></span> <span>CARREGANDO...</span>';
+
+    try {
+      model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
+      maxPredictions = model.getTotalClasses();
+
+      webcam = new tmImage.Webcam(360, 360, true);
+      await webcam.setup();
+      await webcam.play();
+
+      document.getElementById("cam-placeholder").style.display = "none";
+      const camEl = document.getElementById("webcam-container");
+      camEl.appendChild(webcam.canvas);
+      camEl.classList.add("active");
+
+      document.getElementById("camDot").classList.add("live");
+      document.getElementById("camLabel").textContent = "AO VIVO";
+      document.getElementById("pred-card").style.display = "block";
+
+      labelContainer = document.getElementById("label-container");
+      labelContainer.innerHTML = "";
+      fills = []; valLabels = []; clsLabels = [];
+
+      for (let i = 0; i < maxPredictions; i++) {
+        const row = document.createElement("div");
+        row.className = "pred-row";
+
+        const meta = document.createElement("div");
+        meta.className = "pred-meta";
+
+        const cls = document.createElement("span");
+        cls.className = "pred-cls";
+        cls.textContent = "Classe " + (i + 1);
+
+        const val = document.createElement("span");
+        val.className = "pred-val";
+        val.textContent = "0.0%";
+
+        meta.appendChild(cls);
+        meta.appendChild(val);
+
+        const track = document.createElement("div");
+        track.className = "prog-track";
+
+        const fill = document.createElement("div");
+        fill.className = "prog-fill";
+        fill.style.width = "0%";
+
+        track.appendChild(fill);
+        row.appendChild(meta);
+        row.appendChild(track);
+        labelContainer.appendChild(row);
+
+        fills.push(fill);
+        valLabels.push(val);
+        clsLabels.push(cls);
+      }
+
+      btn.classList.add("done");
+      btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> <span>CÂMERA ATIVA!</span>';
+
+      window.requestAnimationFrame(loop);
+
+    } catch (err) {
+      console.error(err);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> <span>TENTAR DE NOVO!</span>';
+    }
+  }
+
+  async function loop() {
+    webcam.update();
+    await predict();
+    window.requestAnimationFrame(loop);
+  }
+
+  async function predict() {
+    const prediction = await model.predict(webcam.canvas);
+    let maxIdx = 0;
+    for (let i = 1; i < maxPredictions; i++) {
+      if (prediction[i].probability > prediction[maxIdx].probability) maxIdx = i;
+    }
+    for (let i = 0; i < maxPredictions; i++) {
+      const prob = prediction[i].probability;
+      const pct  = (prob * 100).toFixed(1);
+      const top  = (i === maxIdx && prob > 0.45);
+      clsLabels[i].textContent = prediction[i].className;
+      valLabels[i].textContent = pct + "%";
+      fills[i].style.width = pct + "%";
+      if (top) {
+        fills[i].classList.add("top");
+        valLabels[i].classList.add("top");
+      } else {
+        fills[i].classList.remove("top");
+        valLabels[i].classList.remove("top");
+      }
+    }
+  }
+</script>
+</body>
+</html>
